@@ -1,8 +1,8 @@
 START ?= 20220601
 END ?= 20220630
 INST ?= "University+of+Texas"
-USERLIST ?= "/data/utrc_report_2022-06-01_to_2022-07-01.xlsx"
-OUTPUT ?= "/data/output_jun_2022.xlsx"
+USERLIST ?= "utrc_report_2022-06-01_to_2022-07-01.xlsx"
+OUTPUT ?= "output_jun_2022.xlsx"
 
 VER ?= 0.1
 APP ?= "wjallen/funding-scraper"

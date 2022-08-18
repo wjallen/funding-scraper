@@ -2,7 +2,7 @@ Funding Scraper for UTRC Reports
 ================================
 
 This tool is designed to pull federal grant information associated with a given
-list of PIs + Affiliations, and falling within a user-defined date range. 
+institution and date range. 
 
 
 Set Up and Run
@@ -33,8 +33,8 @@ the same folder:
 START ?= 20220601
 END ?= 20220630
 INST ?= "University+of+Texas"
-USERLIST ?= "/data/PIs_Afills.xlsx"
-OUTPUT ?= "/data/output.xlsx"
+USERLIST ?= "PIs_Afills.xlsx"
+OUTPUT ?= "output.xlsx"
 ```
 
 Run the tool:
@@ -46,7 +46,7 @@ $ make run
 Output will be written to the same folder as the input:
 
 ```
-$ ls /data/
+$ ls ./data/
 PIs_Afills.xlsx    output.xlsx
 ```
 
