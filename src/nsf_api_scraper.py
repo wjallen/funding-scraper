@@ -192,17 +192,12 @@ def write_output_sheet(award_dict, userlist, output):
 
 def main():
 
-    # turn these into params
-    START_DATE='07/01/2022'
-    END_DATE='07/31/2022'
-
     parser = argparse.ArgumentParser(description='Scrape NSF funded awards')
     parser.add_argument('-s', '--start', dest='start_date', help='range start date, format = YYYYMMDD', required=True)
     parser.add_argument('-e', '--end', dest='end_date', help='range start date, format = YYYYMMDD', required=True)
     parser.add_argument('-i', '--institution', dest='inst', help='institution search term, format = University+of+Texas', required=True)
     parser.add_argument('-u', '--userlist', dest='userlist', help='input file with list of names and affiliations', required=True)
     parser.add_argument('-o', '--output', dest='output', help='output file', required=True)
-
     args = parser.parse_args()
 
     start = datetime.datetime.strptime(args.start_date, '%Y%m%d').strftime('%m/%d/%Y')
