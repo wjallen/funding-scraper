@@ -1,0 +1,25 @@
+START ?= 20220601
+END ?= 20220630
+INST ?= "University+of+Texas"
+USERLIST ?= "/data/utrc_report_2022-06-01_to_2022-07-01.xlsx"
+OUTPUT ?= "/data/output_jun_2022.xlsx"
+
+VER ?= 0.1
+APP ?= "wjallen/funding-scraper"
+UID := $(shell id -u)
+GID := $(shell id -g)
+
+
+build:
+	docker build -t ${APP}:${VER} .
+
+run: build
+	docker run --rm -v ${PWD}/data:/data -u ${UID}:${GID} ${APP}:${VER} python /nsf_api_scraper.py \
+                   --start ${START} --end ${END} --inst ${INST} --userlist ${USERLIST} --output ${OUTPUT}
+
+int: build
+	docker run --rm -it ${APP}:${VER} python
+
+push:
+	docker push ${APP}:${VER}
+
