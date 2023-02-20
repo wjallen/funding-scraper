@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # 
-# For NSF API docs, see:
-# https://www.research.gov/common/webapi/awardapisearch-v1.htm
+# For NIH API docs, see:
+# https://api.reporter.nih.gov/
 #
 import argparse
 import datetime
@@ -9,10 +9,15 @@ import logging
 import sys
 import json
 import requests
-#from requests.adapters import HTTPAdapter
 from openpyxl import load_workbook
 import xlsxwriter
 
+"""
+Define the url for NIH API and the info being
+saved to our spreadsheets. ALL_RESULTS will store
+a list of objects created from the data parsed from
+API POST responses.
+"""
 
 URL = 'https://api.reporter.nih.gov/v2/projects/search'
 AWARD_INFO=['id',
@@ -35,12 +40,19 @@ ALL_RESULTS = []
 
 def findAllProjects(start,end):
 
+    """
+    Given a start and end date, the function makes a POST call to NIH API
+    given a date range and the University of Texas string. Data from the response
+    is parsed and appened to our list of formatted objects.
+    """
+
     obj = {
     "criteria":
     {
         "project_start_date": { "from_date": start, "to_date": end },
         "org_names": ["University of Texas"]
     },
+        "limit": 499,
         "offset":0,
         "sort_field":"project_start_date",
         "sort_order":"desc"
@@ -90,6 +102,7 @@ def findAllProjects(start,end):
         ALL_RESULTS.append(myObj)
 
 def findTACCUsers(userlist,output):
+    
     """
     Given a list of award information and a list of TACC usernames, write
     an output workbook with two worksheets: (1) Awards that match a TACC username
@@ -127,8 +140,10 @@ def findTACCUsers(userlist,output):
     nf_row = 1
     for item in ALL_RESULTS:
         name_str = item['piFirstName'].lower() + item['piLastName'].lower()
+        name_str = name_str.replace(" ", "")
         collaborators = []
         formattedCollab = []
+        collab_str = ""
 
         if(item['coPDPI']!= "NO DATA AVAILABLE"):
             collaborators = item['coPDPI']
@@ -139,88 +154,71 @@ def findTACCUsers(userlist,output):
                 if collab_str in name_dict.keys():
                     formattedCollab.append(z['first_name'] + " " + z['last_name'])
 
-        print(formattedCollab)
-        
-        if name_str in name_dict.keys() or formattedCollab:
-            if not formattedCollab:
-                logging.info(f'{name_str} matches {name_dict[name_str]}')
-                found_worksheet.write_row(f_row, 0, [name_dict[name_str][0],
-                                                    name_dict[name_str][1],
-                                                    name_dict[name_str][2],
-                                                    item['id'],
-                                                    item['agency'],
-                                                    item['awardeeName'],
-                                                    item['startDate'],
-                                                    item['expDate'],
-                                                    item['estimatedTotalAmt'],
-                                                    item['piFirstName'],
-                                                    item['piLastName'],
-                                                    item['pdPIName'],
-                                                    item['title'],
-                                                    json.dumps(item['coPDPI'])
-                                                    ])
-            else:
-                found_worksheet.write_row(f_row, 0, [item['awardeeName'],
-                                                    item['piFirstName'],
-                                                    item['piLastName'],
-                                                    item['id'],
-                                                    item['agency'],
-                                                    item['awardeeName'],
-                                                    item['startDate'],
-                                                    item['expDate'],
-                                                    item['estimatedTotalAmt'],
-                                                    item['piFirstName'],
-                                                    item['piLastName'],
-                                                    item['pdPIName'],
-                                                    item['title'],
-                                                    json.dumps(item['coPDPI'])
-                                                    ])
+        condition = name_str in name_dict.keys() and formattedCollab
+        condition2 = name_str not in name_dict.keys() and formattedCollab
+        if 'casey' in name_str:
+            print(item['piFirstName'])
+            print(item['piLastName'])
+            print(name_str)
+            print(name_dict['caseyvanstappen'])
+            #print(name_str + name_dict[name_str]) 
+        if condition or name_str in name_dict.keys():
+            logging.info(f'{name_str} matches {name_dict[name_str]}')
+            found_worksheet.write_row(f_row, 0, [name_dict[name_str][0],
+                                                name_dict[name_str][1],
+                                                name_dict[name_str][2],
+                                                item['id'],
+                                                item['agency'],
+                                                item['awardeeName'],
+                                                item['startDate'],
+                                                item['expDate'],
+                                                item['estimatedTotalAmt'],
+                                                item['piFirstName'],
+                                                item['piLastName'],
+                                                item['pdPIName'],
+                                                item['title'],
+                                                json.dumps(item['coPDPI'])
+                                                ])
             if(formattedCollab):
                 found_worksheet.write(f_row,14,json.dumps(formattedCollab),collab_format)
             else:
                 found_worksheet.write(f_row,14,"None Found")
             f_row += 1
+
+        elif condition2:
+            found_worksheet.write_row(f_row, 0, [name_dict[collab_str][0],
+                                                item['piFirstName'],
+                                                item['piLastName'],
+                                                item['id'],
+                                                item['agency'],
+                                                item['awardeeName'],
+                                                item['startDate'],
+                                                item['expDate'],
+                                                item['estimatedTotalAmt'],
+                                                item['piFirstName'],
+                                                item['piLastName'],
+                                                item['pdPIName'],
+                                                item['title'],
+                                                json.dumps(item['coPDPI'])
+                                                ])
+            found_worksheet.write(f_row,14,json.dumps(formattedCollab),collab_format)
+            f_row += 1
         else:
             logging.info(f'{name_str} has no match')
             not_found_worksheet.write_row(nf_row, 0,[ item['id'],
-                                                      item['agency'],
-                                                      item['awardeeName'],
-                                                      item['startDate'],
-                                                      item['expDate'],
-                                                      item['estimatedTotalAmt'],
-                                                      item['piFirstName'],
-                                                      item['piLastName'],
-                                                      item['pdPIName'],
-                                                      item['title'],
-                                                      json.dumps(item['coPDPI'])
+                                                        item['agency'],
+                                                        item['awardeeName'],
+                                                        item['startDate'],
+                                                        item['expDate'],
+                                                        item['estimatedTotalAmt'],
+                                                        item['piFirstName'],
+                                                        item['piLastName'],
+                                                        item['pdPIName'],
+                                                        item['title'],
+                                                        json.dumps(item['coPDPI'])
                                                     ])                                              
             nf_row += 1
-        '''
-        if(collaborators):
-            print(collaborators)
-            for x in collaborators:
-                print(x)
-                name_str = x['first_name'].lower() + x['last_name'].lower()
-                if name_str in name_dict.keys():
-                    print(name_str)
-                    logging.info(f'{name_str} matches {name_dict[name_str]}')
-                    found_worksheet.write_row(f_row, 0, [name_dict[name_str][0],
-                                                 name_dict[name_str][1],
-                                                 name_dict[name_str][2],
-                                                 item['id'],
-                                                 item['agency'],
-                                                 item['awardeeName'],
-                                                 item['startDate'],
-                                                 item['expDate'],
-                                                 item['estimatedTotalAmt'],
-                                                 x['first_name'],
-                                                 x['last_name'],
-                                                 item['pdPIName'],
-                                                 json.dumps(item['coPDPI']),
-                                                 item['title']
-                                                ])
-                    f_row += 1
-            '''
+
     workbook.close()
     return
 
