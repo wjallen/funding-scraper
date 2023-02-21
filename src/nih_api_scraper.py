@@ -255,8 +255,7 @@ def findTACCUsers(userlist,output):
 
         # If the name does not match one in our TACC system, we will search through names that have an exact 
         # last name match. The first name will be compared using fuzzywuzzy word matching. If this returns 
-        # a score of 89 or higher, we will pass the PI as a match. If the returned score is between 81 and 88
-        # inclusive, the affiliation will be checked. If affiliation matches, the PI will be considered a match.
+        # a score of 89 or higher, we will pass the PI as a match.
 
         else:
             logging.info(f'{name_str} has no match')
