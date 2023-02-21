@@ -21,12 +21,14 @@ format='%(asctime)s %(levelname)s %(message)s',
 
 """
 Define the url for NIH API and the info being
-saved to our spreadsheets. ALL_RESULTS will store
+saved to our spreadsheets. ALL_UNIVERSITIES maps the API
+institution names to our own. ALL_RESULTS will store
 a list of objects created from the data parsed from
 API POST responses.
 """
 
 URL = 'https://api.reporter.nih.gov/v2/projects/search'
+
 AWARD_INFO=['id',
             'agency',
             'awardeeName',
@@ -40,8 +42,6 @@ AWARD_INFO=['id',
             'coPDPI',
             'taccPDPI',
            ]
-
-AGENCY = 'NIH'
 
 ALL_UNIVERSITIES={
     'UNIVERSITY OF TEXAS RIO GRANDE VALLEY': 'University of Texas Rio Grande Valley', 
@@ -176,9 +176,9 @@ def findTACCUsers(userlist,output):
     found_worksheet = workbook.add_worksheet('utrc_nsf_funding')
     found_worksheet.write_row(0, 0, ['utrc_institution', 'utrc_first_name', 'utrc_last_name']+AWARD_INFO, bold)
     not_found_worksheet = workbook.add_worksheet('not_utrc_nsf_funding')
-    not_found_worksheet.write_row(0, 0, AWARD_INFO+['conflicts'], bold)
+    not_found_worksheet.write_row(0, 0, AWARD_INFO, bold)
     collab_format = workbook.add_format({'font_color':'red'})
-    fizz_format = workbook.add_format({'bg_color':'orange', 'bold':True})
+    fizz_format = workbook.add_format({'bg_color':'#FCC981'})
 
     f_row = 1
     nf_row = 1
@@ -191,6 +191,7 @@ def findTACCUsers(userlist,output):
         first_name_str = item['piFirstName'].lower()
         last_name_str = item['piLastName'].lower()
         affiliation = item['awardeeName']
+
         collaborators = []
         formattedCollab = []
         collab_str = ""
@@ -254,34 +255,58 @@ def findTACCUsers(userlist,output):
 
         # If the name does not match one in our TACC system, we will search through names that have an exact 
         # last name match. The first name will be compared using fuzzywuzzy word matching. If this returns 
-        # a score of 89 or higher, the affiliation will be checked. If affiliation matches, the name will be considered a match.
+        # a score of 89 or higher, we will pass the PI as a match. If the returned score is between 81 and 88
+        # inclusive, the affiliation will be checked. If affiliation matches, the PI will be considered a match.
 
         else:
             logging.info(f'{name_str} has no match')
-            not_found_worksheet.write_row(nf_row, 0,[ item['id'],
-                                                        item['agency'],
-                                                        item['awardeeName'],
-                                                        item['startDate'],
-                                                        item['expDate'],
-                                                        item['estimatedTotalAmt'],
-                                                        item['piFirstName'],
-                                                        item['piLastName'],
-                                                        item['pdPIName'],
-                                                        item['title'],
-                                                        json.dumps(item['coPDPI'])
-                                                    ])
-            not_found_worksheet.write(nf_row,11,"None Found")                                  
+            
+            fuzzy = False
+            following = True
+
             for x in name_dict:
                 if(last_name_str != name_dict[x][2].lower()):
                     continue
                 y = fuzz.ratio(first_name_str,name_dict[x][1].lower())
+
                 if(y >= 89 and y < 100 ):
                     logging.warning(f"Ratio of {y} for {first_name_str} {last_name_str} and {name_dict[x][1].lower()} {name_dict[x][2].lower()}")
-                    logging.warning(f"Checking {affiliation} and {name_dict[x][0]}")
-                    if(ALL_UNIVERSITIES[affiliation] == name_dict[x][0]):
-                        logging.warning(f"{affiliation} matched with {name_dict[x][0]}")
-                        not_found_worksheet.write(nf_row,12,f"{item['piFirstName'] }{item['piLastName']} vs {name_dict[x][1]}{name_dict[x][2]}",fizz_format)                                  
-            nf_row += 1
+                    logging.warning(f"PI Affiliation: {affiliation} && TACC User Affiliation: {name_dict[x][0]}")
+                    logging.warning(f"Moving {first_name_str} {last_name_str} into sheet (i) based on fuzzywuzzy ratio")
+                    found_worksheet.write_row(f_row, 0, [name_dict[x][0],
+                                                name_dict[x][1],
+                                                name_dict[x][2],
+                                                item['id'],
+                                                item['agency'],
+                                                item['awardeeName'],
+                                                item['startDate'],
+                                                item['expDate'],
+                                                item['estimatedTotalAmt'],
+                                                item['piFirstName'],
+                                                item['piLastName'],
+                                                item['pdPIName'],
+                                                item['title'],
+                                                json.dumps(item['coPDPI']),
+                                                "None Found"
+                                                ],fizz_format)
+                    f_row += 1
+                    following = False
+                        
+            if following:
+                not_found_worksheet.write_row(nf_row, 0,[ item['id'],
+                                                            item['agency'],
+                                                            item['awardeeName'],
+                                                            item['startDate'],
+                                                            item['expDate'],
+                                                            item['estimatedTotalAmt'],
+                                                            item['piFirstName'],
+                                                            item['piLastName'],
+                                                            item['pdPIName'],
+                                                            item['title'],
+                                                            json.dumps(item['coPDPI']),
+                                                            "None Found"
+                                                        ])                                                       
+                nf_row += 1
 
     workbook.close()
     return
