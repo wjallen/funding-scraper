@@ -348,7 +348,8 @@ def findTACCUsers(userlist,output):
 
     found = f_row - 1
     notFound = nf_row - 1  
-    logging.info("TACC Percentage: {:.2f}".format(float(found/notFound) * 100) + "%")
+    if(notFound != 0):
+        logging.info("TACC Percentage: {:.2f}".format(float(found/notFound) * 100) + "%")
 
     workbook.close()
     return
