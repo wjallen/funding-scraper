@@ -10,5 +10,6 @@ RUN chmod go=u-w /nsf_api_scraper.py
 ADD ./src/nih_api_scraper.py /nih_api_scraper.py
 RUN chmod go=u-w /nih_api_scraper.py
 
+CMD ["python", "/nsf_api_scraper.py", "-h"]
 CMD ["python", "/nih_api_scraper.py", "-h"]
 
