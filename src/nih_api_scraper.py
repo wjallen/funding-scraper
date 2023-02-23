@@ -5,9 +5,8 @@
 #
 
 import argparse
-from datetime import datetime, date, time, timedelta
+from datetime import datetime, timedelta
 import logging
-import sys
 import json
 import requests
 from openpyxl import load_workbook
@@ -22,11 +21,10 @@ format='%(asctime)s %(levelname)s %(message)s',
 
 """
 Define the url for NIH API and the info being
-saved to our spreadsheets. ALL_UNIVERSITIES maps the API
-institution names to our own. API_CALLS will store a 
-list of API requests after splitting the date range.
-ALL_RESULTS will store a list of objects created from 
-the data parsed from API POST responses.
+saved to our spreadsheets. AWARD_INFO is used to
+format our sheets that hold the desired data. 
+ALL_UNIVERSITIES maps the API institution names 
+to our own. 
 """
 
 URL = 'https://api.reporter.nih.gov/v2/projects/search'
@@ -62,9 +60,6 @@ ALL_UNIVERSITIES={
     'UNIVERSITY OF TEXAS SAN ANTONIO': 'University of Texas at San Antonio'
 }
 
-API_CALLS = []
-ALL_RESULTS = []
-
 def partition(l, n):
     for i in range(0, len(l), n):
         yield l[i:i + n]
@@ -78,6 +73,7 @@ def splitDateRange(origin,N,blocks):
     limit. The max amount of days in a range per request is 75.
     """
 
+    api_calls = []
     timeDict ={}
     timeList= []
     timeList.append(origin)
@@ -102,34 +98,32 @@ def splitDateRange(origin,N,blocks):
                 "sort_field":"project_start_date",
                 "sort_order":"desc"
             }
-        API_CALLS.append(texas)
+        api_calls.append(texas)
 
-def findAllProjects(start,end):
+    return api_calls
+
+def findAllProjects(start,end,calls):
 
     """
-    Given a start and end date, the function makes a POST call to NIH API
-    given a date range and a list of strings for the query. Data from the response
-    is parsed and appended to our list of formatted objects. North Texas results are
-    removed.
+    Given a start date, end date, and a list of json payloads the function makes 
+    a POST call to NIH API for each payload. Each payload is given a date range and a 
+    list of strings for the query. Data from the response is parsed and appended to our 
+    list of formatted objects. North Texas results are removed.
     """
 
+    all_results = []
     results = []
-    for x in API_CALLS:
+
+    for x in calls:
         response = requests.post(URL, json = x).json()
         temp = response["results"]
-        assert(len(temp) < 500), "The date range provided too many results, please choose a smaller range."
+        assert(len(temp) < 500), "The date range provided too many results, please provide a block smaller than 75 days."
         results += temp
-
-    with open('/data/data.json','w+') as f:
-        json.dump(results,f)
 
     for y in results:
         if(results.count(y) > 1):
             assert("Duplicates in the response")
     
-    with open('/data/data.json','w') as f:
-        json.dump(results,f)
-
     logging.info(f"START: {start} END: {end}")
     print(f'Before removing North Texas: {len(results)}')
 
@@ -160,7 +154,7 @@ def findAllProjects(start,end):
                     "first_name": y["first_name"],
                     "middle_name": y["last_name"],
                     "last_name" : y["last_name"]
-                    })
+                })
 
         # Create objects with the information we want.
 
@@ -179,11 +173,12 @@ def findAllProjects(start,end):
             "city" : x["organization"]["org_city"]
         }
 
-        ALL_RESULTS.append(myObj)
+        all_results.append(myObj)
 
-    print(f'After removing North Texas: {len(ALL_RESULTS)}')
+    print(f'After removing North Texas: {len(all_results)}')
+    return all_results
 
-def findTACCUsers(userlist,output):
+def findTACCUsers(userlist,output,awards):
 
     """
     Given a list of award information and a list of TACC usernames, write
@@ -216,12 +211,15 @@ def findTACCUsers(userlist,output):
     not_found_worksheet = workbook.add_worksheet('not_utrc_nih_funding')
     not_found_worksheet.write_row(0, 0, AWARD_INFO, bold)
     collab_format = workbook.add_format({'font_color':'red'})
-    fizz_format = workbook.add_format({'bg_color':'#FCC981'})
+    f_format = workbook.add_format({'bg_color':'#90EE90'})
+    nf_format = workbook.add_format({'bg_color':'#FCC981'})
 
     f_row = 1
     nf_row = 1
+    fuzzy_names = 0
+    saved_names = 0
 
-    for item in ALL_RESULTS:
+    for item in awards:
         name_str = item['piFirstName'].lower() + item['piLastName'].lower()
         name_str = name_str.replace(" ", "")
         first_name_str = item['piFirstName'].lower()
@@ -304,33 +302,42 @@ def findTACCUsers(userlist,output):
                 if(last_name_str != name_dict[x][2].lower()):
                     continue
                 y = fuzz.ratio(first_name_str,name_dict[x][1].lower())
-                if(y >= 89 and y < 100 ):
+                if(y >= 80):
+                    fuzzy_names += 1
+                    fuzzy = True
                     logging.warning(f"Ratio of {y} for {first_name_str} {last_name_str} and {name_dict[x][1].lower()} {name_dict[x][2].lower()}")
                     logging.warning(f"PI Affiliation: {affiliation} && TACC User Affiliation: {name_dict[x][0]}")
-                    logging.warning(f"Moving {first_name_str} {last_name_str} into sheet (i) based on fuzzywuzzy ratio")
-                    if  not added:
-                        found_worksheet.write_row(f_row, 0, [name_dict[x][0],
-                                                    name_dict[x][1],
-                                                    name_dict[x][2],
-                                                    item['id'],
-                                                    item['agency'],
-                                                    item['awardeeName'],
-                                                    item['startDate'],
-                                                    item['expDate'],
-                                                    item['estimatedTotalAmt'],
-                                                    item['piFirstName'],
-                                                    item['piLastName'],
-                                                    item['pdPIName'],
-                                                    item['title'],
-                                                    json.dumps(item['coPDPI']),
-                                                    "None Found"
-                                                    ],fizz_format)
-                        f_row += 1
-                        following = False
-                        added = True
+                    if(y >= 89 and y < 100 ):
+                        saved_names += 1
+                        logging.warning(f"Moving {first_name_str} {last_name_str} into sheet (i) based on fuzzywuzzy ratio")
+                        if  not added:
+                            found_worksheet.write_row(f_row, 0, [name_dict[x][0],
+                                                        name_dict[x][1],
+                                                        name_dict[x][2],
+                                                        item['id'],
+                                                        item['agency'],
+                                                        item['awardeeName'],
+                                                        item['startDate'],
+                                                        item['expDate'],
+                                                        item['estimatedTotalAmt'],
+                                                        item['piFirstName'],
+                                                        item['piLastName'],
+                                                        item['pdPIName'],
+                                                        item['title'],
+                                                        json.dumps(item['coPDPI']),
+                                                        "None Found"
+                                                        ],f_format)
+                            f_row += 1
+                            following = False
+                            added = True
                     
                         
             if following:
+                if fuzzy:
+                    format = nf_format
+                else:
+                    format = None
+
                 not_found_worksheet.write_row(nf_row, 0,[ item['id'],
                                                             item['agency'],
                                                             item['awardeeName'],
@@ -343,13 +350,15 @@ def findTACCUsers(userlist,output):
                                                             item['title'],
                                                             json.dumps(item['coPDPI']),
                                                             "None Found"
-                                                        ])                                                       
+                                                        ], format)                                                       
                 nf_row += 1
 
     found = f_row - 1
     notFound = nf_row - 1  
     if(notFound != 0):
         logging.info("TACC Percentage: {:.2f}".format(float(found/notFound) * 100) + "%")
+    logging.info(f'Total fuzzy names: {fuzzy_names}' )
+    logging.info(f'Fuzzy names saved: {saved_names}' )
 
     workbook.close()
     return
@@ -370,6 +379,7 @@ def main():
 
 
     # parse arguments to split date range and avoid a request limit
+    # using a 75 day split
 
     origin = datetime.strptime(start,"%Y-%m-%d")
     finish = datetime.strptime(end,"%Y-%m-%d")
@@ -380,10 +390,12 @@ def main():
     chunks = list(partition(l,n))
     
     # split user inputted date range, get all NIH awards, match TACC Users
+    api_calls = []
+    all_awards = []
 
-    splitDateRange(origin, groups, chunks)
-    findAllProjects(start,end)
-    findTACCUsers('/data/' + args.userlist, '/data/' + args.output)
+    api_calls = splitDateRange(origin, groups, chunks)
+    all_awards = findAllProjects(start,end,api_calls)
+    findTACCUsers('/data/' + args.userlist, '/data/' + args.output, all_awards)
 
 if __name__ == '__main__':
     main()
