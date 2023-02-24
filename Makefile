@@ -14,9 +14,12 @@ build:
 	docker build -t ${APP}:${VER} .
 
 run: build
+	touch ./data/${OUTPUT} ./data/DOE_${OUTPUT}
 	docker run --rm -v ${PWD}/data:/data -u ${UID}:${GID} ${APP}:${VER} python /nsf_api_scraper.py \
                    --start ${START} --end ${END} --inst ${INST} --userlist ${USERLIST} --output ${OUTPUT}
-
+	docker run --rm -v ${PWD}/data:/data -u ${UID}:${GID} ${APP}:${VER} python /doe_scraper.py \
+                   --start ${START} --end ${END} --userlist ${USERLIST} --output ${OUTPUT}
+				   
 int: build
 	docker run --rm -it ${APP}:${VER} python
 

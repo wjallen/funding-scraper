@@ -114,6 +114,21 @@ NIH Award API
 DOE Award API
 -------------
 
-*In progress*
+THE DOE Award scraper works in four steps:
 
+1. First makes several POST requests on the DOE Award search page, grabbing
+   required hidden fields and updating its payload with each request.
+2. Then makes POST requests containing actual search by a range of dates and 
+   award institution name. Note that "University+of+Texas" will actually match 
+   all 14 UT System institutions. Due to the nature of the search page, it
+   makes these requests in batches of up to 100, and can handle a maximum of
+   1100 total search results (11 POST requests). Returns HTML pages containing
+   data of up to 100 award entries each.
+3. Then parses each HTML page, adding all relevant data into individual
+   dictionaries, which then get appended to a final list.
+4. Finally, the tool compares the retrieved results with the input list of PIs
+   and affiliations. The tool implements a pattern matching algorithm to match
+   entries where first names differ as needed.The output is written to an xlsx 
+   sheet with two tabs: (i) awards that match one of the PIs in the input list, 
+   and (ii) awards that do not match any PIs in the input list.
 
