@@ -210,7 +210,7 @@ def findTACCUsers(userlist,output,awards):
     found_worksheet.write_row(0, 0, ['utrc_institution', 'utrc_first_name', 'utrc_last_name']+AWARD_INFO, bold)
     not_found_worksheet = workbook.add_worksheet('not_utrc_nih_funding')
     not_found_worksheet.write_row(0, 0, AWARD_INFO, bold)
-    collab_format = workbook.add_format({'font_color':'red'})
+
     f_format = workbook.add_format({'bg_color':'#90EE90'})
     nf_format = workbook.add_format({'bg_color':'#FCC981'})
 
@@ -219,7 +219,9 @@ def findTACCUsers(userlist,output,awards):
     fuzzy_names = 0
     saved_names = 0
 
-    for item in awards:
+    for item in awards:    
+        collab_format = workbook.add_format({'font_color':'red'})
+
         name_str = item['piFirstName'].lower() + item['piLastName'].lower()
         name_str = name_str.replace(" ", "")
         first_name_str = item['piFirstName'].lower()
@@ -232,12 +234,27 @@ def findTACCUsers(userlist,output,awards):
 
         if(item['coPDPI']!= "NO DATA AVAILABLE"):
             collaborators = item['coPDPI']
+
+        # If a collaborator is in the TACC system, save it for proper formatting.
+        # Check for fuzzywuzzy name matching on collaborators.
             
         if(collaborators):
             for z in collaborators:
                 collab_str = z['first_name'].lower() + z['last_name'].lower()
                 if collab_str in name_dict.keys():
                     formattedCollab.append(z['first_name'] + " " + z['last_name'])
+                else:
+                    for x in name_dict:
+                        if(z['last_name'].lower() != name_dict[x][2].lower()):
+                            continue
+                        y = fuzz.ratio(z['first_name'].lower(),name_dict[x][1].lower())
+                        if(y >= 89 and y < 100 ):
+                            fuzzy_names += 1
+                            saved_names += 1
+                            logging.warning(f"Collaborator {z['first_name']} {z['last_name']} was found based on fuzzywuzzy ratio")
+                            formattedCollab.append(name_dict[x][1] + " " + name_dict[x][2])
+                            collab_format = workbook.add_format({'bg_color': '#90EE90', 'font_color' : 'red'})
+
 
         # If the name matches one in our TACC system, add it to the found sheet. 
         # If the collaborators are in our TACC systems, highlight their names red.
@@ -282,8 +299,8 @@ def findTACCUsers(userlist,output,awards):
                                                 item['piLastName'],
                                                 item['pdPIName'],
                                                 item['title'],
-                                                json.dumps(item['coPDPI'])
                                                 ])
+            found_worksheet.write(f_row,13,json.dumps(item['coPDPI']),collab_format)
             found_worksheet.write(f_row,14,json.dumps(formattedCollab),collab_format)
             f_row += 1
 

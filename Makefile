@@ -1,5 +1,5 @@
 START ?= 20220101
-END ?= 20220601
+END ?= 20220701
 INST ?= "University+of+Texas"
 USERLIST ?= "utrc_report_2023-01-01_to_2023-02-01.xlsx"
 OUTPUT ?= "test.xlsx"
