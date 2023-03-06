@@ -1,11 +1,11 @@
-START ?= 20220601
-END ?= 20220630
+START ?= 20220101
+END ?= 20220701
 INST ?= "University+of+Texas"
-USERLIST ?= "utrc_report_2022-06-01_to_2022-07-01.xlsx"
-OUTPUT ?= "output_jun_2022.xlsx"
+USERLIST ?= "utrc_report_2023-01-01_to_2023-02-01.xlsx"
+OUTPUT ?= "test.xlsx"
 
 VER ?= 0.1
-APP ?= "wjallen/funding-scraper"
+APP ?= "joshuaamedina2000/funding-scraper"
 UID := $(shell id -u)
 GID := $(shell id -g)
 
@@ -16,6 +16,8 @@ build:
 run: build
 	touch ./data/${OUTPUT} ./data/DOE_${OUTPUT}
 	docker run --rm -v ${PWD}/data:/data -u ${UID}:${GID} ${APP}:${VER} python /nsf_api_scraper.py \
+                     --start ${START} --end ${END} --inst ${INST} --userlist ${USERLIST} --output ${OUTPUT}
+	docker run --rm -v ${PWD}/data:/data -u ${UID}:${GID} ${APP}:${VER} python /nih_api_scraper.py \
                    --start ${START} --end ${END} --inst ${INST} --userlist ${USERLIST} --output ${OUTPUT}
 	docker run --rm -v ${PWD}/data:/data -u ${UID}:${GID} ${APP}:${VER} python /doe_scraper.py \
                    --start ${START} --end ${END} --userlist ${USERLIST} --output ${OUTPUT}
