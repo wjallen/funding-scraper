@@ -108,7 +108,31 @@ https://www.research.gov/common/webapi/awardapisearch-v1.htm
 NIH Award API
 -------------
 
-*In progress* 
+The NIH Award API scraper works in three steps:
+
+1. First searches all awards by a range of dates and award institution name.
+   Note that ["UNIVERSITY OF TEXAS","University of TX","UT SOUTHWESTERN MEDICAL CENTER"]
+   will actually match all 14 UT System institutions. Returns a list of awards and respective 
+   info matching the institutions and that started within the range of dates.
+2. Given the list of awards, the tool generates a list of objects that contain the information
+   we find useful. Institution name, PIs, dates, funding, and project info is saved
+   into our objects.
+3. Finally, the tool compares the retrieved results with the input list of PIs
+   and affiliations. The output is written to an xlsx sheet with two tabs: (i) 
+   awards that match one of the PIs in the input list, and (ii) awards that do
+   not match any PIs in the input list.
+
+
+Note there are some some issues with the way Name matching work. For now, a word matching
+tool (Fuzzywuzzy) is used to compare first names of a PI only if the last name matches in the awards.
+If the comparison returns a passing score, the affiliation is compared exactly. If the affiliation
+matches, we consider this a match and the output will end up in output sheet (i). Otherwise,
+the information will go in output sheet (ii). 
+
+
+API reference:
+
+https://api.reporter.nih.gov/
 
 
 DOE Award API
