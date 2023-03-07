@@ -1,11 +1,11 @@
-START ?= 20220101
-END ?= 20220701
+START ?= 20230201
+END ?= 20230228
 INST ?= "University+of+Texas"
 USERLIST ?= "utrc_report_2023-01-01_to_2023-02-01.xlsx"
 OUTPUT ?= "test.xlsx"
 
-VER ?= 0.1
-APP ?= "joshuaamedina2000/funding-scraper"
+APP ?= "wjallen/funding-scraper"
+VER ?= 0.2
 UID := $(shell id -u)
 GID := $(shell id -g)
 
@@ -15,13 +15,13 @@ build:
 
 run: build
 	touch ./data/${OUTPUT} ./data/DOE_${OUTPUT}
-	docker run --rm -v ${PWD}/data:/data -u ${UID}:${GID} ${APP}:${VER} python /nsf_api_scraper.py \
+	docker run --rm -v ${PWD}/data:/data -u ${UID}:${GID} ${APP}:${VER} python /code/nsf_api_scraper.py \
                      --start ${START} --end ${END} --inst ${INST} --userlist ${USERLIST} --output ${OUTPUT}
-	docker run --rm -v ${PWD}/data:/data -u ${UID}:${GID} ${APP}:${VER} python /nih_api_scraper.py \
+	docker run --rm -v ${PWD}/data:/data -u ${UID}:${GID} ${APP}:${VER} python /code/nih_api_scraper.py \
                    --start ${START} --end ${END} --inst ${INST} --userlist ${USERLIST} --output ${OUTPUT}
-	docker run --rm -v ${PWD}/data:/data -u ${UID}:${GID} ${APP}:${VER} python /doe_scraper.py \
+	docker run --rm -v ${PWD}/data:/data -u ${UID}:${GID} ${APP}:${VER} python /code/doe_scraper.py \
                    --start ${START} --end ${END} --userlist ${USERLIST} --output ${OUTPUT}
-				   
+
 int: build
 	docker run --rm -it ${APP}:${VER} python
 
