@@ -4,7 +4,7 @@ INST ?= "University+of+Texas"
 USERLIST ?= "utrc_report_2023-01-01_to_2023-02-01.xlsx"
 OUTPUT ?= "test.xlsx"
 
-APP ?= "austindarrow/funding-scraper"
+APP ?= "wjallen/funding-scraper"
 VER ?= 0.2
 UID := $(shell id -u)
 GID := $(shell id -g)

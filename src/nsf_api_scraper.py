@@ -12,6 +12,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from openpyxl import load_workbook
 import xlsxwriter
+from fuzzy_match import fuzzy_match
 
 
 logging.basicConfig(level=logging.INFO)
@@ -136,8 +137,8 @@ def write_output_sheet(award_dict, userlist, output):
             institution = row[0].value
             first_name = row[1].value
             last_name = row[2].value
-            name = ' '.join([first_name, last_name]).lower().replace(' ','')
-            name_dict[name] = [institution, first_name, last_name]
+            utrc_full_name = ' '.join([first_name, last_name]).lower().replace(' ','')
+            name_dict[utrc_full_name] = [institution, first_name, last_name]
 
     logging.info(f'number of items in name_dict = {len(name_dict.keys())}')
 
@@ -150,44 +151,41 @@ def write_output_sheet(award_dict, userlist, output):
 
     f_row = 1
     nf_row = 1
-    for item in award_dict.keys():
-        name_str = award_dict[item]['pdPIName'].lower().replace(' ','')
-        if name_str in name_dict.keys():
-            logging.info(f'{name_str} matches {name_dict[name_str]}')
-            found_worksheet.write_row(f_row, 0, [name_dict[name_str][0],
-                                                 name_dict[name_str][1],
-                                                 name_dict[name_str][2],
-                                                 award_dict[item]['id'],
-                                                 award_dict[item]['agency'],
-                                                 award_dict[item]['awardeeName'],
-                                                 award_dict[item]['startDate'],
-                                                 award_dict[item]['expDate'],
-                                                 award_dict[item]['estimatedTotalAmt'],
-                                                 award_dict[item]['piFirstName'],
-                                                 award_dict[item]['piLastName'],
-                                                 award_dict[item]['pdPIName'],
-                                                 json.dumps(award_dict[item]['coPDPI']),
-                                                 award_dict[item]['title']
-                                                ])
+    
+    for entry in award_dict.items():
+        item = entry[1]
+        base_info = [item['id'],
+                     item['agency'],
+                     item['awardeeName'],
+                     item['startDate'],
+                     item['expDate'],
+                     item['estimatedTotalAmt'],
+                     item['piFirstName'],
+                     item['piLastName'],
+                     item['pdPIName'],
+                     json.dumps(item['coPDPI']),
+                     item['title']]
+        award_full_name = ' '.join([item['piFirstName'], item['piLastName']]).lower().replace(' ', '')
+        if award_full_name in name_dict.keys():
+            logging.info(f'{award_full_name} matches {name_dict[award_full_name]}')
+            found_worksheet.write_row(f_row, 0, [name_dict[award_full_name][0],
+                                                 name_dict[award_full_name][1],
+                                                 name_dict[award_full_name][2]
+                                                ] + base_info)
             f_row += 1
         else:
-            logging.info(f'{name_str} has no match')
-            not_found_worksheet.write_row(nf_row, 0, [award_dict[item]['id'],
-                                                      award_dict[item]['agency'],
-                                                      award_dict[item]['awardeeName'],
-                                                      award_dict[item]['startDate'],
-                                                      award_dict[item]['expDate'],
-                                                      award_dict[item]['estimatedTotalAmt'],
-                                                      award_dict[item]['piFirstName'],
-                                                      award_dict[item]['piLastName'],
-                                                      award_dict[item]['pdPIName'],
-                                                      json.dumps(award_dict[item]['coPDPI']),
-                                                      award_dict[item]['title']
-                                                     ])
-            nf_row += 1
+            fuzzycheck = fuzzy_match(logging, item['piLastName'], name_dict, found_worksheet,
+                                     not_found_worksheet, award_full_name,
+                                     base_info, workbook, f_row, nf_row)
+
+            if fuzzycheck is False:
+                nf_row += 1
+            else:
+                f_row += 1
 
     workbook.close()
     return
+    
 
 
 def main():

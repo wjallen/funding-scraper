@@ -6,7 +6,7 @@ import re
 import logging
 from openpyxl import load_workbook
 import xlsxwriter
-from fuzzywuzzy import fuzz
+from fuzzy_match import fuzzy_match
 import sys
 
 logging.basicConfig(level=logging.INFO)
@@ -208,8 +208,8 @@ def write_output_sheet(award_dict, userlist, output):
             institution = row[0].value
             first_name = row[1].value
             last_name = row[2].value
-            name = ' '.join([first_name, last_name]).lower().replace(' ', '')
-            name_dict[name] = [institution, first_name, last_name]
+            utrc_full_name = ' '.join([first_name, last_name]).lower().replace(' ', '')
+            name_dict[utrc_full_name] = [institution, first_name, last_name]
 
     logging.info(f'number of items in name_dict = {len(name_dict.keys())}')
     logging.info(f'number of awards found = {len(award_dict)}')
@@ -244,21 +244,21 @@ def write_output_sheet(award_dict, userlist, output):
                      item['Program Area'],
                      item['Register Number'],
                      item['DUNS']]
-        name_str = f"{item['PI First Name']}{item['PI Last Name']}".lower().replace(' ', '')
+        award_full_name = ' '.join([item['PI First Name'], item['PI Last Name']]).lower().replace(' ', '')
 
         # Add it to found if exact match
-        if name_str in name_dict.keys():
-            logging.info(f"{name_str} matches {name_dict[name_str]}")
+        if award_full_name in name_dict.keys():
+            logging.info(f"{award_full_name} matches {name_dict[award_full_name]}")
             found_worksheet.write_row(f_row, 0,
-                                      [name_dict[name_str][0],
-                                       name_dict[name_str][1],
-                                       name_dict[name_str][2]
+                                      [name_dict[award_full_name][0],
+                                       name_dict[award_full_name][1],
+                                       name_dict[award_full_name][2]
                                        ]+base_info)
             f_row += 1
         # Otherwise, do a fuzzy pattern matching check
         else:
-            fuzzycheck = fuzzy_match(item, name_dict, found_worksheet,
-                                     not_found_worksheet, name_str,
+            fuzzycheck = fuzzy_match(logging, item['PI Last Name'], name_dict, found_worksheet,
+                                     not_found_worksheet, award_full_name,
                                      base_info, workbook, f_row, nf_row)
 
             if fuzzycheck is False:
@@ -269,41 +269,6 @@ def write_output_sheet(award_dict, userlist, output):
     workbook.close()
     return
 
-
-def fuzzy_match(item, name_dict, found_worksheet,
-                not_found_worksheet, name_str,
-                base_info, workbook, f_row, nf_row):
-    """
-    Given a search results award PI name, fuzzy match against each entry in
-    the TACC userlist database. Accept matches in two categories--80-88% and 89+%.
-    """
-    f_format = workbook.add_format({'bg_color': '#90EE90'})
-    nf_format = workbook.add_format({'bg_color': '#FCC981'})
-    for key, values in name_dict.items():
-        # Last name MUST match exactly
-        if item['PI Last Name'].lower() == values[2].lower():
-            match_percent = fuzz.ratio(item['PI First Name'], name_dict[key][1])
-            # If first name 89+% match, add it to found and highlight green
-            if match_percent >= 89:
-                logging.info(f"{name_str} fuzzy matches {values[1:2]} \
-                               --match percent = {match_percent}")
-                found_worksheet.write_row(f_row, 0, [values[0], values[1], values[2]]
-                                          + base_info
-                                          + [f"match percent = {match_percent}"], f_format)
-                return True
-            # If first name 80+% match, add it to found and highlight orange
-            elif match_percent >= 65:
-                logging.info(f"{name_str} fuzzy matches {values[1:2]} \
-                               --match percent = {match_percent}")
-                # Log and color the field in orange
-                found_worksheet.write_row(f_row, 0, [values[0], values[1], values[2]]
-                                          + base_info
-                                          + [f"match percent = {match_percent}"], nf_format)
-                return True
-    # If no matches >=80%, add to not found workbook
-    logging.info(f"{item['PI First Name']}{item['PI Last Name']} has no match")
-    not_found_worksheet.write_row(nf_row, 0, base_info)
-    return False
-
-
-main()
+if __name__ == '__main__':
+    main()
+    
