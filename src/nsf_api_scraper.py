@@ -205,7 +205,7 @@ def main():
 
     award_id_list = search_by_date_range(start, end, args.inst)
     award_dict = retrieve_award_info(award_id_list)
-    write_output_sheet(award_dict, '/data/' + args.userlist, '/data/' + args.output)
+    write_output_sheet(award_dict, '/data/' + args.userlist, '/data/' + f'NSF_{args.output}')
 
     return
 

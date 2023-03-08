@@ -9,7 +9,7 @@ import xlsxwriter
 from fuzzywuzzy import fuzz
 import sys
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 AWARD_INFO = ['Award Number',
               'Title',
@@ -147,8 +147,12 @@ def parse_html(response_content, final_results):
     trs = tbody.find_all("tr")
     tr_heads, tr_bodies = [], []
     while trs:
-        tr_heads.append(trs.pop(0))
-        tr_bodies.append(trs.pop(0))
+        try:
+            tr_heads.append(trs.pop(0))
+            tr_bodies.append(trs.pop(0))
+        except:
+            logging.error(f"Error parsing html. Likely no results were found for specified date range.")
+            return
     logging.info(f"{len(tr_heads)} award entries found on this page")
     results_list = []
 
@@ -277,7 +281,7 @@ def fuzzy_match(item, name_dict, found_worksheet,
     nf_format = workbook.add_format({'bg_color': '#FCC981'})
     for key, values in name_dict.items():
         # Last name MUST match exactly
-        if item['PI Last Name'] == values[2]:
+        if item['PI Last Name'].lower() == values[2].lower():
             match_percent = fuzz.ratio(item['PI First Name'], name_dict[key][1])
             # If first name 89+% match, add it to found and highlight green
             if match_percent >= 89:
@@ -288,7 +292,7 @@ def fuzzy_match(item, name_dict, found_worksheet,
                                           + [f"match percent = {match_percent}"], f_format)
                 return True
             # If first name 80+% match, add it to found and highlight orange
-            elif match_percent >= 80:
+            elif match_percent >= 65:
                 logging.info(f"{name_str} fuzzy matches {values[1:2]} \
                                --match percent = {match_percent}")
                 # Log and color the field in orange

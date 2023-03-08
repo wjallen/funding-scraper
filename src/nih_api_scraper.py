@@ -412,7 +412,7 @@ def main():
 
     api_calls = splitDateRange(origin, groups, chunks)
     all_awards = findAllProjects(start,end,api_calls)
-    findTACCUsers('/data/' + args.userlist, '/data/' + args.output, all_awards)
+    findTACCUsers('/data/' + args.userlist, '/data/' + f'NIH_{args.output}', all_awards)
 
 if __name__ == '__main__':
     main()

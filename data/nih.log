@@ -1,0 +1,147 @@
+2023-03-08 14:18:55,833 DEBUG Starting new HTTPS connection (1): api.reporter.nih.gov:443
+2023-03-08 14:18:56,850 DEBUG https://api.reporter.nih.gov:443 "POST /v2/projects/search HTTP/1.1" 200 1559978
+2023-03-08 14:18:57,276 INFO START: 2022-09-01 END: 2022-09-30
+2023-03-08 14:18:57,278 INFO REMOVING: UNIVERSITY OF NORTH TEXAS
+2023-03-08 14:18:57,279 INFO REMOVING: UNIVERSITY OF NORTH TEXAS
+2023-03-08 14:18:57,280 INFO REMOVING: UNIVERSITY OF NORTH TEXAS HLTH SCI CTR
+2023-03-08 14:18:58,546 INFO number of items in name_dict = 22356
+2023-03-08 14:18:58,548 INFO pablovaldesquevedo has no match
+2023-03-08 14:18:58,563 INFO vanessaschick has no match
+2023-03-08 14:18:58,570 INFO corinnejones matches ['University of Texas at Austin (UT) (UT Austin)', 'Corinne', 'Jones']
+2023-03-08 14:18:58,572 INFO alisoncoady has no match
+2023-03-08 14:18:58,579 INFO marcelgoldschen-ohm has no match
+2023-03-08 14:18:58,586 INFO josephinehinds has no match
+2023-03-08 14:18:58,610 INFO kimberlyroaten has no match
+2023-03-08 14:18:58,618 INFO priyatanshgurha has no match
+2023-03-08 14:18:58,625 INFO jenniferyoung has no match
+2023-03-08 14:18:58,640 INFO rodneyinfante has no match
+2023-03-08 14:18:58,648 INFO jacktsai has no match
+2023-03-08 14:18:58,655 INFO adriennedula matches ['University of Texas at Austin (UT) (UT Austin)', 'Adrienne', 'Dula']
+2023-03-08 14:18:58,657 INFO marinapascadimagliano has no match
+2023-03-08 14:18:58,664 INFO elanafertig has no match
+2023-03-08 14:18:58,677 INFO robertbast has no match
+2023-03-08 14:18:58,691 INFO yushinkim matches ['University of Texas Health Science Center at San Antonio', 'Yu Shin', 'Kim']
+2023-03-08 14:18:58,699 INFO anirbanmaitra has no match
+2023-03-08 14:18:58,706 INFO juanpascual has no match
+2023-03-08 14:18:58,713 INFO anirbanmaitra has no match
+2023-03-08 14:18:58,719 INFO laurawood has no match
+2023-03-08 14:18:58,726 INFO yuebingzheng matches ['University of Texas at Austin (UT) (UT Austin)', 'Yuebing', 'Zheng']
+2023-03-08 14:18:58,727 INFO anirbanmaitra has no match
+2023-03-08 14:18:58,734 INFO sreeramashetty has no match
+2023-03-08 14:18:58,748 INFO boyigan has no match
+2023-03-08 14:18:58,755 INFO boyigan has no match
+2023-03-08 14:18:58,762 INFO thomasfloyd matches ['University of Texas Southwestern Medical Center (UTSW) (UT Southwestern)', 'THOMAS', 'FLOYD']
+2023-03-08 14:18:58,763 INFO jeffreymyers has no match
+2023-03-08 14:18:58,770 INFO boyigan has no match
+2023-03-08 14:18:58,785 INFO albertkoong has no match
+2023-03-08 14:18:58,800 INFO sudhakarselvaraj has no match
+2023-03-08 14:18:58,808 INFO cristiancoarfa has no match
+2023-03-08 14:18:58,815 INFO adelel-naggar has no match
+2023-03-08 14:18:58,822 INFO vladsandulache has no match
+2023-03-08 14:18:58,850 INFO petergrace has no match
+2023-03-08 14:18:58,858 INFO robertmessing matches ['University of Texas at Austin (UT) (UT Austin)', 'Robert', 'Messing']
+2023-03-08 14:18:58,868 INFO jeffreymyers has no match
+2023-03-08 14:18:58,897 INFO abdullahosman has no match
+2023-03-08 14:18:58,906 INFO stephenlai has no match
+2023-03-08 14:18:58,916 INFO davidpiwnica-worms has no match
+2023-03-08 14:18:58,924 INFO stevenlin matches ['University of Texas MD Anderson Cancer Center', 'Steven', 'Lin']
+2023-03-08 14:18:58,925 INFO ayaznajafov has no match
+2023-03-08 14:18:58,933 INFO theodoreprice has no match
+2023-03-08 14:18:58,940 INFO brijsingh has no match
+2023-03-08 14:18:58,962 INFO theodoreprice has no match
+2023-03-08 14:18:58,977 INFO maryfarach-carson has no match
+2023-03-08 14:18:58,984 INFO theodoreprice has no match
+2023-03-08 14:18:58,992 INFO stephanieshiers has no match
+2023-03-08 14:18:59,000 INFO chun-tehlee has no match
+2023-03-08 14:18:59,008 INFO michelecuratolo has no match
+2023-03-08 14:18:59,015 INFO pradiptaray matches ['University of Texas at Dallas (UTD) (UT Dallas)', 'Pradipta', 'Ray']
+2023-03-08 14:18:59,031 INFO gaudenzdanuser has no match
+2023-03-08 14:18:59,039 INFO garykobinger has no match
+2023-03-08 14:18:59,055 INFO anirbanmaitra has no match
+2023-03-08 14:18:59,063 INFO michaelcannell has no match
+2023-03-08 14:18:59,070 INFO diegocastrillon has no match
+2023-03-08 14:18:59,103 INFO denisewilkes has no match
+2023-03-08 14:18:59,111 INFO xueqiujian matches ['University of Texas Health Science Center at San Antonio', 'Xueqiu', 'Jian']
+2023-03-08 14:18:59,113 INFO guoqingqian has no match
+2023-03-08 14:18:59,120 INFO gabrielamustatawilson has no match
+2023-03-08 14:18:59,128 INFO hanliliu has no match
+2023-03-08 14:18:59,155 INFO fernandocampos has no match
+2023-03-08 14:18:59,172 INFO moniquepappadis has no match
+2023-03-08 14:18:59,188 INFO douglasstrand matches ['University of Texas Southwestern Medical Center (UTSW) (UT Southwestern)', 'Douglas', 'Strand']
+2023-03-08 14:18:59,190 INFO brettball has no match
+2023-03-08 14:18:59,198 INFO anandrohatgi matches ['University of Texas Southwestern Medical Center (UTSW) (UT Southwestern)', 'Anand', 'Rohatgi']
+2023-03-08 14:18:59,199 INFO robertdantzer has no match
+2023-03-08 14:18:59,207 INFO powellbrown has no match
+2023-03-08 14:18:59,215 INFO saltanatchildress has no match
+2023-03-08 14:18:59,223 INFO younghokwon has no match
+2023-03-08 14:18:59,231 INFO sangeethareddy has no match
+2023-03-08 14:18:59,239 INFO chaoxing matches ['University of Texas Southwestern Medical Center (UTSW) (UT Southwestern)', 'Chao', 'Xing']
+2023-03-08 14:18:59,240 INFO gabrielaromerouribe has no match
+2023-03-08 14:18:59,249 INFO corneliselferink has no match
+2023-03-08 14:18:59,265 INFO naderpouratian has no match
+2023-03-08 14:18:59,273 INFO ting-sunghsieh has no match
+2023-03-08 14:18:59,290 INFO lauraseligman has no match
+2023-03-08 14:18:59,299 INFO caseyvanstappen matches ['University of Texas at Austin (UT) (UT Austin)', 'Casey', 'Van Stappen']
+2023-03-08 14:18:59,300 INFO charlesnemeroff matches ['University of Texas at Austin (UT) (UT Austin)', 'Charles', 'Nemeroff']
+2023-03-08 14:18:59,301 INFO stephenlevene matches ['University of Texas at Dallas (UTD) (UT Dallas)', 'Stephen', 'Levene']
+2023-03-08 14:18:59,302 INFO christinaherrera has no match
+2023-03-08 14:18:59,319 INFO madhukartrivedi has no match
+2023-03-08 14:18:59,336 INFO wenbozhang matches ['University of Texas at Austin (UT) (UT Austin)', 'Wenbo', 'Zhang']
+2023-03-08 14:18:59,338 INFO rachelleon has no match
+2023-03-08 14:18:59,346 INFO shayalvashisth has no match
+2023-03-08 14:18:59,354 INFO michaeldugan has no match
+2023-03-08 14:18:59,362 INFO junjiechen has no match
+2023-03-08 14:18:59,371 INFO ivand'orso matches ['University of Texas Southwestern Medical Center (UTSW) (UT Southwestern)', 'Ivan', "D'Orso"]
+2023-03-08 14:18:59,372 INFO vishalpatel matches ['University of Texas at Austin (UT) (UT Austin)', 'Vishal', 'Patel']
+2023-03-08 14:18:59,382 INFO xiaodongcheng matches ['University of Texas Health Science Center at Houston', 'Xiaodong', 'Cheng']
+2023-03-08 14:18:59,384 INFO leahtruckenbrod has no match
+2023-03-08 14:18:59,391 INFO dylankirsch has no match
+2023-03-08 14:18:59,399 INFO carmendessauer has no match
+2023-03-08 14:18:59,407 INFO amymoreno matches ['University of Texas MD Anderson Cancer Center', 'Amy', 'Moreno']
+2023-03-08 14:18:59,408 INFO michaelburton has no match
+2023-03-08 14:18:59,416 INFO williamgoette has no match
+2023-03-08 14:18:59,425 INFO weiguolu has no match
+2023-03-08 14:18:59,433 INFO jamesjones has no match
+2023-03-08 14:18:59,441 INFO lindaperrotti has no match
+2023-03-08 14:18:59,449 INFO zhaolai has no match
+2023-03-08 14:18:59,457 INFO mohamadhabes matches ['University of Texas Health Science Center at San Antonio', 'Mohamad', 'Habes']
+2023-03-08 14:18:59,458 INFO sadafmilani has no match
+2023-03-08 14:18:59,472 INFO kathrinmilbury has no match
+2023-03-08 14:18:59,485 INFO rodneyritzel has no match
+2023-03-08 14:18:59,506 INFO wenbozhang matches ['University of Texas at Austin (UT) (UT Austin)', 'Wenbo', 'Zhang']
+2023-03-08 14:18:59,507 INFO sylvianatividad-diaz matches ['University of Texas at Austin (UT) (UT Austin)', 'Sylvia', 'Natividad-Diaz']
+2023-03-08 14:18:59,508 INFO lacybarton has no match
+2023-03-08 14:18:59,516 INFO junliao has no match
+2023-03-08 14:18:59,524 INFO manishtripathi has no match
+2023-03-08 14:18:59,535 INFO emilschueler has no match
+2023-03-08 14:18:59,542 INFO adrianaperez matches ['University of Texas Health Science Center at Houston', 'Adriana', 'Perez']
+2023-03-08 14:18:59,551 INFO humamkadara has no match
+2023-03-08 14:18:59,564 INFO davidpiwnica-worms has no match
+2023-03-08 14:18:59,571 INFO renataferrarotto has no match
+2023-03-08 14:18:59,578 INFO irmacisneros has no match
+2023-03-08 14:18:59,585 INFO yongqin has no match
+2023-03-08 14:18:59,589 WARNING Ratio of 80 for yong qin and yigong qin
+2023-03-08 14:18:59,590 WARNING PI Affiliation: UNIVERSITY OF TEXAS EL PASO && TACC User Affiliation: University of Texas at Austin (UT) (UT Austin)
+2023-03-08 14:18:59,594 INFO georgioskotsakis has no match
+2023-03-08 14:18:59,607 INFO beverlyrothermel has no match
+2023-03-08 14:18:59,614 INFO anilkumarpillai has no match
+2023-03-08 14:18:59,621 INFO amymoreno matches ['University of Texas MD Anderson Cancer Center', 'Amy', 'Moreno']
+2023-03-08 14:18:59,622 INFO carlarodriguez-tirado has no match
+2023-03-08 14:18:59,629 INFO andreaschai has no match
+2023-03-08 14:18:59,636 INFO yunsunnam has no match
+2023-03-08 14:18:59,643 INFO joeladler matches ['University of Texas at Austin (UT) (UT Austin)', 'Joel', 'Adler']
+2023-03-08 14:18:59,644 INFO shumeisong has no match
+2023-03-08 14:18:59,651 INFO farshidalambeigi has no match
+2023-03-08 14:18:59,658 INFO samirhanash has no match
+2023-03-08 14:18:59,666 INFO laurafonken matches ['University of Texas at Austin (UT) (UT Austin)', 'Laura', 'Fonken']
+2023-03-08 14:18:59,667 INFO raghukalluri has no match
+2023-03-08 14:18:59,674 INFO venuprasadpoojary has no match
+2023-03-08 14:18:59,681 INFO kevinlanza has no match
+2023-03-08 14:18:59,688 INFO taslimal-hilal has no match
+2023-03-08 14:18:59,695 INFO marcelgoldschen-ohm has no match
+2023-03-08 14:18:59,702 INFO danielschmitz has no match
+2023-03-08 14:18:59,709 INFO fidelsantamaria matches ['University of Texas at San Antonio', 'Fidel', 'Santamaria']
+2023-03-08 14:18:59,711 INFO elizabethwasmuth has no match
+2023-03-08 14:18:59,717 INFO TACC Percentage: 32.71%
+2023-03-08 14:18:59,718 INFO Total fuzzy names: 1
+2023-03-08 14:18:59,719 INFO Fuzzy names saved: 0
