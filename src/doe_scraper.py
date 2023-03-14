@@ -9,7 +9,7 @@ import xlsxwriter
 from fuzzy_match import fuzzy_match
 import sys
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARNING)
 
 AWARD_INFO = ['Award Number',
               'Title',

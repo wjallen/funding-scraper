@@ -15,7 +15,7 @@ import xlsxwriter
 from fuzzy_match import fuzzy_match
 
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARNING)
 
 BASE_URL='http://api.nsf.gov/services/v1/'
 SEARCH_URL=BASE_URL + 'awards.json'

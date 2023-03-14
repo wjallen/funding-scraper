@@ -14,10 +14,10 @@ import xlsxwriter
 from fuzzywuzzy import fuzz
 import math
 
-logging.basicConfig(level=logging.DEBUG,
-format='%(asctime)s %(levelname)s %(message)s',
-      filename='/data/nih.log',
-      filemode='w')
+logging.basicConfig(level=logging.WARNING)
+#format='%(asctime)s %(levelname)s %(message)s',
+#      filename='/data/nih.log',
+#      filemode='w')
 
 """
 Define the url for NIH API and the info being
@@ -125,7 +125,7 @@ def findAllProjects(start,end,calls):
             assert("Duplicates in the response")
     
     logging.info(f"START: {start} END: {end}")
-    print(f'Before removing North Texas: {len(results)}')
+    logging.info(f'Before removing North Texas: {len(results)}')
 
     for x in results:
 
@@ -175,7 +175,7 @@ def findAllProjects(start,end,calls):
 
         all_results.append(myObj)
 
-    print(f'After removing North Texas: {len(all_results)}')
+    logging.info(f'After removing North Texas: {len(all_results)}')
     return all_results
 
 def findTACCUsers(userlist,output,awards):

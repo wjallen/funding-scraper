@@ -34,3 +34,4 @@ def fuzzy_match(logging, last_name, name_dict, found_worksheet,
     logging.info(f"{award_full_name} has no match")
     not_found_worksheet.write_row(nf_row, 0, base_info)
     return False
+
