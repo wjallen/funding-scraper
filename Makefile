@@ -14,7 +14,6 @@ build:
 	docker build -t ${APP}:${VER} .
 
 run: build
-#	touch ./data/${OUTPUT} ./data/DOE_${OUTPUT} --Austin: Not seeing the old error with permissions, even with this commented out
 	docker run --rm -v ${PWD}/data:/data -u ${UID}:${GID} ${APP}:${VER} python /code/nsf_api_scraper.py \
                      --start ${START} --end ${END} --inst ${INST} --userlist ${USERLIST} --output ${OUTPUT}
 	docker run --rm -v ${PWD}/data:/data -u ${UID}:${GID} ${APP}:${VER} python /code/nih_api_scraper.py \
