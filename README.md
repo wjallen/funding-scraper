@@ -1,5 +1,20 @@
-Funding Scraper for UTRC Reports
-================================
+Funding Scraper for UTRC Reports - DEPRECATED
+=============================================
+
+##########################
+##########################
+##########################
+
+
+NOTE: Don't use this repo anymore. The codebase was moved over to 
+https://github.com/TACC/funding-scraper.
+
+
+
+
+##########################
+##########################
+##########################
 
 This tool is designed to pull federal grant information associated with a given
 institution and date range. 
